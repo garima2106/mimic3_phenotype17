@@ -62,8 +62,8 @@ val_ds = MimicDataSetPhenotyping(data_dir, val_data_path, mean_variance, cat_dic
 
 
 
-train_dataloader = DataLoader(train_ds, batch_size = batch_size, shuffle=True)
-val_dataloader = DataLoader(val_ds, batch_size = 1, shuffle=True)
+train_dataloader = DataLoader(train_ds, batch_size = batch_size, shuffle=True, num_workers=0)
+val_dataloader = DataLoader(val_ds, batch_size = 1, shuffle=True, num_workers=0)
 
 model = Model(d_model, num_heads, d_ff, num_classes, N, sinusoidal).to(DEVICE)
 criterion = nn.BCEWithLogitsLoss()

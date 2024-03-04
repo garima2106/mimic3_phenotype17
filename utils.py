@@ -55,10 +55,14 @@ class MimicDataSetPhenotyping(Dataset):
         label = torch.tensor(self.data_df[cols].values[idx], dtype=torch.int64).to(self.device)
 
         return {
-            "encoder_input": [time_input, variable_input, value_input],
-            "encoder_mask": (variable_input != self.pad_value).unsqueeze(0).int(),
+            "encoder_input": [
+                time_input.to(self.device),
+                variable_input.to(self.device),
+                value_input.to(self.device)
+            ],
+            "encoder_mask": (variable_input != self.pad_value).unsqueeze(0).int().to(self.device),
             "variables": variables,
-            "label": label
+            "label": label.to(self.device)
         }
 
     def extract(self, data):
@@ -243,40 +247,5 @@ def calculate_auc_prc(model, data_loader, num_classes=25):
     auc_prc_scores = [average_precision_score(labels_all[:, i], probabilities_all[:, i]) for i in range(num_classes)]
     auc_prc = np.mean(auc_prc_scores)
     return auc_prc'''
-
-
-# def get_mean_var(data, data_dir):
-#     categorical_variables = ['Glascow coma scale eye opening', 
-#                                  'Glascow coma scale motor response', 
-#                                  'Glascow coma scale verbal response']
-#     sample_path = data_dir + data['stay'][0]
-#     id_name_dict = {}
-#     df = pd.read_csv(sample_path)
-#     df.drop(labels=categorical_variables, axis=1, inplace=True)
-#     for i in range(len(df.columns)):
-#         id_name_dict[i] = df.columns[i]
-#     variable_values = {k : [] for k in df.columns[1:]}
-#     for sample_path in tqdm(data['stay']):
-#         sample_path = data_dir+sample_path
-#         df = pd.read_csv(sample_path)
-#         values = df.values
-#         df.drop(labels=categorical_variables, axis=1, inplace=True)
-#         cols = df.columns[1:]
-#         df = df[cols]
-#         values = df.values
-#         for i in range(values.shape[0]):
-#             for j in range(values.shape[1]):
-#                 try :
-#                     np.isnan(values[i][j])
-#                 except:
-#                     print(values[i][j])
-#                 if np.isnan(values[i][j]) == False:
-#                     variable_values[id_name_dict[j+1]].append(values[i][j])
-#     result_dict = {}
-#     for feature, values in variable_values.items():
-#         mean_value = np.mean(values)
-#         variance_value = np.var(values)
-#         result_dict[feature] = {'mean': mean_value, 'variance': variance_value}
-#     return result_dict
 
 
